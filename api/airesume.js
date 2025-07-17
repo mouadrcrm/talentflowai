@@ -1,6 +1,4 @@
 export default async function handler(req, res) {
-  const start = Date.now();
-
   if (req.method !== "POST") {
     return res.status(404).json({ error: "Not found" });
   }
@@ -32,7 +30,6 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Resolve PDF redirect
     const pdfResp = await fetch(pdfurl, { method: "GET", redirect: "manual" });
     if (pdfResp.status !== 302) {
       return res.status(400).json({
@@ -45,7 +42,6 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "No Location header on pdf redirect" });
     }
 
-    // Clean up JD
     const cleanedJD = String(jobdescription)
       .replace(/<script\b[^<]*<\/script>/gi, "")
       .replace(/<style\b[^<]*<\/style>/gi, "")
@@ -77,19 +73,19 @@ export default async function handler(req, res) {
     });
 
     const analyzeText = await analyzeResp.text();
-    const duration = Date.now() - start;
 
-    return res.status(analyzeResp.status).json({
-      message: "Request completed",
-      analyzeResponse: analyzeText,
-      debug: {
-        pdfRedirectUrl,
-        analyzePayload: payload,
-        requestDurationMs: duration,
-        rawJobDescription: jobdescription,
-        processedJobDescription: cleanedJD,
-      },
-    });
+    let parsedAnalyze;
+    try {
+      parsedAnalyze = JSON.parse(analyzeText);
+    } catch {
+      return res.status(502).json({ error: "Invalid JSON from analyze endpoint", raw: analyzeText });
+    }
+
+    return res
+      .status(analyzeResp.status)
+      .setHeader("Content-Type", "application/json; charset=utf-8")
+      .json(parsedAnalyze);
+
   } catch (err) {
     return res.status(500).json({
       error: "Internal server error",
