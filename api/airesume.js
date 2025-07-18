@@ -95,8 +95,11 @@ export default async function handler(req, res) {
 
     let analyzeText = await analyzeResp.text();
 
-    // 🔥 FORCE rating to 4 by replacing "rating":<number> with "rating":4
-    analyzeText = analyzeText.replace(/"rating"\s*:\s*\d+/, '"rating":4');
+    // 🔥 FORCE any "*rating" to 4 (candidate_rating, rating, etc.)
+    analyzeText = analyzeText.replace(
+      /"(\w*rating)"\s*:\s*\d+/gi,
+      '"$1":4'
+    );
 
     let parsedAnalyze;
     try {
