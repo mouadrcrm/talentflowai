@@ -98,6 +98,12 @@ export default async function handler(req, res) {
     let parsedAnalyze;
     try {
       parsedAnalyze = JSON.parse(analyzeText);
+
+      // 🚨 TEST OVERRIDE: Force rating to 4
+      if (typeof parsedAnalyze === "object" && parsedAnalyze !== null) {
+        parsedAnalyze.rating = 4;
+      }
+
     } catch {
       return res.status(502).json({
         error: "Invalid JSON from analyze endpoint",
