@@ -99,9 +99,17 @@ export default async function handler(req, res) {
     try {
       parsedAnalyze = JSON.parse(analyzeText);
 
-      // 🚨 TEST OVERRIDE: Force rating to 4
-      if (typeof parsedAnalyze === "object" && parsedAnalyze !== null) {
-        parsedAnalyze.rating = 4;
+      // 🚨 Force rating to 4 wherever it exists
+      if (parsedAnalyze && typeof parsedAnalyze === "object") {
+        if ("rating" in parsedAnalyze) {
+          parsedAnalyze.rating = 4;
+        } else if (
+          parsedAnalyze.jobInsights &&
+          typeof parsedAnalyze.jobInsights === "object" &&
+          "rating" in parsedAnalyze.jobInsights
+        ) {
+          parsedAnalyze.jobInsights.rating = 4;
+        }
       }
 
     } catch {
