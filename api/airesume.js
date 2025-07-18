@@ -93,25 +93,14 @@ export default async function handler(req, res) {
       body: JSON.stringify(payload),
     });
 
-    const analyzeText = await analyzeResp.text();
+    let analyzeText = await analyzeResp.text();
+
+    // 🔥 FORCE rating to 4 by replacing "rating":<number> with "rating":4
+    analyzeText = analyzeText.replace(/"rating"\s*:\s*\d+/, '"rating":4');
 
     let parsedAnalyze;
     try {
       parsedAnalyze = JSON.parse(analyzeText);
-
-      // 🚨 Force rating to 4 wherever it exists
-      if (parsedAnalyze && typeof parsedAnalyze === "object") {
-        if ("rating" in parsedAnalyze) {
-          parsedAnalyze.rating = 4;
-        } else if (
-          parsedAnalyze.jobInsights &&
-          typeof parsedAnalyze.jobInsights === "object" &&
-          "rating" in parsedAnalyze.jobInsights
-        ) {
-          parsedAnalyze.jobInsights.rating = 4;
-        }
-      }
-
     } catch {
       return res.status(502).json({
         error: "Invalid JSON from analyze endpoint",
