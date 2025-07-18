@@ -1,3 +1,9 @@
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(404).json({ error: "Not found" });
@@ -9,20 +15,25 @@ export default async function handler(req, res) {
   }
 
   let clientPayload;
-
   try {
-    if (typeof req.body === "object" && req.body !== null) {
-      // Accepts standard JSON
-      clientPayload = req.body;
-    } else {
-      // Accepts raw Ruby-style string and normalizes it
-      const normalized = String(req.body)
-        .replace(/"=>/g, '":')
-        .replace(/(\w+)=>/g, '"$1":');
-      clientPayload = JSON.parse(normalized);
-    }
-  } catch {
-    return res.status(400).json({ error: "Invalid JSON payload" });
+    let rawBody = "";
+
+    await new Promise((resolve, reject) => {
+      req.on("data", (chunk) => {
+        rawBody += chunk;
+      });
+      req.on("end", resolve);
+      req.on("error", reject);
+    });
+
+    // Normalize Ruby-style => to JSON-style :
+    const normalized = rawBody
+      .replace(/"=>/g, '":')
+      .replace(/(\w+)=>/g, '"$1":');
+
+    clientPayload = JSON.parse(normalized);
+  } catch (err) {
+    return res.status(400).json({ error: "Invalid JSON or form payload" });
   }
 
   const {
@@ -88,7 +99,10 @@ export default async function handler(req, res) {
     try {
       parsedAnalyze = JSON.parse(analyzeText);
     } catch {
-      return res.status(502).json({ error: "Invalid JSON from analyze endpoint", raw: analyzeText });
+      return res.status(502).json({
+        error: "Invalid JSON from analyze endpoint",
+        raw: analyzeText,
+      });
     }
 
     return res
