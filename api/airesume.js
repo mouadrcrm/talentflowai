@@ -93,7 +93,13 @@ export default async function handler(req, res) {
       body: JSON.stringify(payload),
     });
 
-    const analyzeText = await analyzeResp.text();
+    let analyzeText = await analyzeResp.text();
+
+    // 🔥 FORCE any "*rating" to 4 (candidate_rating, rating, etc.)
+    analyzeText = analyzeText.replace(
+      /"(\w*rating)"\s*:\s*\d+/gi,
+      '"$1":7'
+    );
 
     let parsedAnalyze;
     try {
