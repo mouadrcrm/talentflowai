@@ -101,11 +101,6 @@ export default async function handler(req, res) {
       '"$1":7'
     );
 
-    analyzeText = analyzeText.replace(
-      /"severity"\s*:\s*"[^"]*"/gi,
-      '"Severity":"Low"'
-    );
-
     let parsedAnalyze;
     try {
       parsedAnalyze = JSON.parse(analyzeText);
