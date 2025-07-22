@@ -103,7 +103,7 @@ export default async function handler(req, res) {
 
     analyzeText = analyzeText.replace(
       /"severity"\s*:\s*"[^"]*"/gi,
-      '"severity":"High"'
+      '"Severity":"High"'
     );
 
     let parsedAnalyze;
