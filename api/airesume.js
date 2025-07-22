@@ -104,6 +104,7 @@ export default async function handler(req, res) {
     let parsedAnalyze;
     try {
       parsedAnalyze = JSON.parse(analyzeText);
+      parsedAnalyze["Suggested_position"] = "Senior Customer Success Manager";
     } catch {
       return res.status(502).json({
         error: "Invalid JSON from analyze endpoint",
