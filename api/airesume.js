@@ -95,16 +95,10 @@ export default async function handler(req, res) {
 
     let analyzeText = await analyzeResp.text();
 
-    // 🔥 FORCE any "*rating" to 4 (candidate_rating, rating, etc.)
-    analyzeText = analyzeText.replace(
-      /"(\w*rating)"\s*:\s*\d+/gi,
-      '"$1":7'
-    );
-
     let parsedAnalyze;
     try {
       parsedAnalyze = JSON.parse(analyzeText);
-      parsedAnalyze["Suggested_position"] = "Senior Customer Success Manager";
+      parsedAnalyze["suggested_position"] = "Senior Customer Success Manager";
     } catch {
       return res.status(502).json({
         error: "Invalid JSON from analyze endpoint",
