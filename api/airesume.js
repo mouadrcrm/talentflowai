@@ -105,11 +105,15 @@ export default async function handler(req, res) {
       });
     }
 
-    const casablancaOffsetMs = 60 * 60 * 1000; // +1 hour in ms
+    const casablancaOffsetMs = 60 * 60 * 1000; // +1h in ms
     const now = new Date(Date.now() + casablancaOffsetMs);
     const future = new Date(now.getTime() + 24 * 60 * 60 * 1000);
 
-    const isoWithMicroseconds = future.toISOString().replace('Z', '.000000Z');
+    // Format as ISO string with microseconds
+    const pad = (n) => String(n).padStart(2, '0');
+    const isoWithMicroseconds = 
+      `${future.getUTCFullYear()}-${pad(future.getUTCMonth() + 1)}-${pad(future.getUTCDate())}T` +
+      `${pad(future.getUTCHours())}:${pad(future.getUTCMinutes())}:${pad(future.getUTCSeconds())}.000000Z`;
 
     return res
       .status(analyzeResp.status)
