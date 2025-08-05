@@ -105,10 +105,20 @@ export default async function handler(req, res) {
       });
     }
 
+    const casablancaOffsetMs = 60 * 60 * 1000; // +1 hour in ms
+    const now = new Date(Date.now() + casablancaOffsetMs);
+    const future = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+
+    const isoWithMicroseconds = future.toISOString().replace('Z', '.000000Z');
+
     return res
       .status(analyzeResp.status)
       .setHeader("Content-Type", "application/json; charset=utf-8")
-      .json(parsedAnalyze);
+      .json({
+        ...parsedAnalyze,
+        expires_at: isoWithMicroseconds,
+      });
+
 
   } catch (err) {
     return res.status(500).json({
