@@ -105,6 +105,11 @@ export default async function handler(req, res) {
       });
     }
 
+    if (parsedAnalyze.hasOwnProperty("representation") && parsedAnalyze.representation === null) {
+      delete parsedAnalyze.representation;
+    }
+
+
     const casablancaOffsetMs = 60 * 60 * 1000; // +1h in ms
     const now = new Date(Date.now() + casablancaOffsetMs);
     const future = new Date(now.getTime() + 24 * 60 * 60 * 1000);
