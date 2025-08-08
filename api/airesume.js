@@ -84,7 +84,7 @@ export default async function handler(req, res) {
       },
     };
 
-    const analyzeResp = await fetch("http://13.60.10.50/analyzeeee", {
+    const analyzeResp = await fetch("http://13.60.10.50/analyze", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
