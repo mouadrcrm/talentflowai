@@ -122,7 +122,7 @@ export default async function handler(req, res) {
 
 
     const manipulated = { ...parsedAnalyze };
-    manipulated.candidate_rating = 10;
+    manipulated.candidate_rating = 5;
     manipulated.expires_at = isoWithMicroseconds;
     return res
       .status(analyzeResp.status)
