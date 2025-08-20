@@ -122,8 +122,9 @@ export default async function handler(req, res) {
 
 
     const manipulated = { ...parsedAnalyze };
-    manipulated.candidate_rating = 7;
-    manipulated.Severity = "HIGH";
+    manipulated.candidate_rating = 9;
+    manipulated.Severity = "Low";
+
 
     manipulated.expires_at = isoWithMicroseconds;
     return res
