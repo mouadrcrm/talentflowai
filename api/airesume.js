@@ -120,17 +120,14 @@ export default async function handler(req, res) {
       `${future.getUTCFullYear()}-${pad(future.getUTCMonth() + 1)}-${pad(future.getUTCDate())}T` +
       `${pad(future.getUTCHours())}:${pad(future.getUTCMinutes())}:${pad(future.getUTCSeconds())}.000000Z`;
 
-
-    const manipulated = { ...parsedAnalyze };
-    manipulated.candidate_rating = 6.5;
-    manipulated.Severity = "low";
-
-
-    manipulated.expires_at = isoWithMicroseconds;
     return res
       .status(analyzeResp.status)
       .setHeader("Content-Type", "application/json; charset=utf-8")
-      .json(manipulated);
+      .json({
+        ...parsedAnalyze,
+        expires_at: isoWithMicroseconds,
+      });
+
 
   } catch (err) {
     return res.status(500).json({
